@@ -9,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.afpa.dal.dao.ClientDAO;
 import org.afpa.dal.models.Client;
+import org.afpa.dal.shared.ExceptionPrinter;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -34,9 +35,16 @@ public final class Index implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initializes the ArrayList
+        ArrayList<Client> databaseClients = null;
+
         try {
             // Fills an ArrayList with all the clients on the database
-        ArrayList<Client> databaseClients = this.clientDAO.list();
+            databaseClients = clientDAO.list();
+        } catch (SQLException e) {
+            // Pretty prints the exception
+            new ExceptionPrinter<>(e).print();
+        }
 
         if (databaseClients != null) {
             // Adds all the clients from the database to the client's observable list
@@ -47,8 +55,5 @@ public final class Index implements Initializable {
         this.lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
 
         this.clients.setItems(clientObservableList);
-        } catch (SQLException e) {
-            
-        } 
     }
 }

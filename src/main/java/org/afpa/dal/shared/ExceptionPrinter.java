@@ -7,7 +7,7 @@ import java.sql.SQLException;
  *
  * @param <T> The exception to pretty print
  */
-public class ExceptionPrinter<T extends Exception> {
+public final class ExceptionPrinter<T extends Exception> {
     private final T exception;
 
     public ExceptionPrinter(T exception) {

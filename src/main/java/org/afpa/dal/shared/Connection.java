@@ -11,12 +11,15 @@ public final class Connection {
     private final Properties info = new Properties();
 
     /**
+     * Returns the created connection to the user
+     *
      * @return The connection to the database
      * @throws SQLException An error if the database failed to connect
      */
     public java.sql.Connection getConnection() throws SQLException {
         java.sql.Connection connection = DriverManager.getConnection(info.getProperty("url"), info);
 
+        // Disables auto commit
         connection.setAutoCommit(false);
 
         return connection;
