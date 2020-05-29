@@ -6,6 +6,7 @@ import java.sql.SQLException;
  * Used to pretty print exceptions
  *
  * @param <T> The exception to pretty print
+ * @see Exception
  */
 public final class ExceptionPrinter<T extends Exception> {
     private final T exception;

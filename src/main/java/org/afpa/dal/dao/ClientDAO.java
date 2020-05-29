@@ -2,13 +2,10 @@ package org.afpa.dal.dao;
 
 import org.afpa.dal.interfaces.CRUD;
 import org.afpa.dal.models.Client;
-import org.afpa.dal.shared.Connection;
+import org.afpa.dal.shared.DataSource;
 import org.afpa.dal.shared.ExceptionPrinter;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Savepoint;
+import java.sql.*;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +15,7 @@ import java.util.ArrayList;
  * @see Client
  */
 public final class ClientDAO implements CRUD<Client> {
-    private final java.sql.Connection connection;
+    private final Connection connection;
 
     /**
      * Primary constructor
@@ -26,14 +23,8 @@ public final class ClientDAO implements CRUD<Client> {
      * @throws SQLException If the connection cannot be established
      */
     public ClientDAO() throws SQLException {
-        // TODO Read from env file ?
-        // TODO Add SQL file
-        // TODO Add gradle script to automate
-        connection = new Connection()
-                .setUrl("jdbc:mysql://localhost:3306/hotel?serverTimezone=UTC")
-                .setPassword("10495")
-                .setUser("root")
-                .getConnection();
+        // TODO Add SQL file .properties
+        connection =  DataSource.getConnection();
     }
 
     /**
@@ -53,12 +44,18 @@ public final class ClientDAO implements CRUD<Client> {
             reservation.setInt(1, id);
             reservation.executeUpdate();
 
+            // Commits the changes to the database
+            connection.commit();
+
             try (PreparedStatement client = connection.prepareStatement("DELETE from client WHERE id = ?")) {
                 // Creates a savepoint before deleting the the client
                 secondSavepoint = connection.setSavepoint("beforeClientDelete");
 
                 client.setInt(1, id);
                 client.executeUpdate();
+
+                // Commits the changes to the database
+                connection.commit();
             } catch (SQLException e) {
                 // Pretty prints the exception
                 new ExceptionPrinter<>(e).print();
@@ -84,7 +81,6 @@ public final class ClientDAO implements CRUD<Client> {
      */
     @Override
     public Client find(int id) throws SQLException {
-        // TODO Put SQL in XML files
         try (PreparedStatement clientStatement = connection.prepareStatement("SELECT * FROM client WHERE cli_id = ?")) {
             // Creates a new empty Client object
             Client client = new Client();
@@ -176,13 +172,16 @@ public final class ClientDAO implements CRUD<Client> {
                 clients.add(client);
             }
 
+            // Commits the changes to the database
+            connection.commit();
+
             // Returns the list of clients from the database
             return clients;
         } catch (SQLException e) {
             // Pretty prints the exception
             new ExceptionPrinter<>(e).print();
 
-            // Rollbacks the changes for the database
+            // Rollbacks the changes to the database
             connection.rollback();
 
             return null;

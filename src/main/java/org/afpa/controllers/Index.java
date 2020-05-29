@@ -51,9 +51,11 @@ public final class Index implements Initializable {
             this.clientObservableList.addAll(databaseClients);
         }
 
+        // Defines the value the TableColumns will have to observe for changes
         this.firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         this.lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
 
+        // Set the items for the clients TableView
         this.clients.setItems(clientObservableList);
     }
 }
