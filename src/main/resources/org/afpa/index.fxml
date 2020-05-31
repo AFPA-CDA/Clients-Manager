@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.afpa.controllers.Index">
+<AnchorPane prefHeight="500.0" prefWidth="800.0" stylesheets="@stylesheets/index.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.afpa.controllers.Index">
     <TableView fx:id="clients" layoutX="14.0" layoutY="14.0" prefHeight="470.0" prefWidth="300.0">
-      <columns>
-          <TableColumn fx:id="lastName" prefWidth="178.0" text="Noms" />
-          <TableColumn fx:id="firstName" prefWidth="121.0" text="Prénoms" />
-      </columns>
+        <columns>
+            <TableColumn fx:id="lastName" prefWidth="178.0" text="Noms" />
+            <TableColumn fx:id="firstName" prefWidth="121.0" text="Prénoms" />
+        </columns>
     </TableView>
+    <Pane layoutX="510.0" layoutY="14.0" prefHeight="470.0" prefWidth="276.0" style="-fx-border-color: black;">
+        <TextField fx:id="lastNameText" layoutX="53.0" layoutY="48.0" promptText="Dubois" />
+        <Label layoutX="53.0" layoutY="21.0" prefHeight="16.0" prefWidth="54.0" text="Nom">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label layoutX="53.0" layoutY="95.0" prefHeight="20.0" prefWidth="66.0" text="Prénom">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <TextField fx:id="firstNameText" layoutX="53.0" layoutY="120.0" promptText="William" />
+        <Label layoutX="53.0" layoutY="166.0" prefHeight="20.0" prefWidth="66.0" text="Ville">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <TextField fx:id="cityText" layoutX="53.0" layoutY="191.0" promptText="Amiens" />
+        <Label layoutX="53.0" layoutY="235.0" prefHeight="20.0" prefWidth="66.0" text="Adresse">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <TextField fx:id="addressText" layoutX="53.0" layoutY="259.0" promptText="65 Rue des Poussins" />
+    </Pane>
+    <Button layoutX="357.0" layoutY="180.0" mnemonicParsing="false" onAction="#add" prefHeight="26.0" prefWidth="87.0" styleClass="buttons" text="Ajouter" />
+    <Button layoutX="357.0" layoutY="224.0" mnemonicParsing="false" onAction="#modify" prefHeight="26.0" prefWidth="87.0" styleClass="buttons" text="Modifier" />
+    <Button layoutX="357.0" layoutY="270.0" mnemonicParsing="false" onAction="#delete" prefHeight="26.0" prefWidth="87.0" styleClass="buttons" text="Supprimer" />
 </AnchorPane>

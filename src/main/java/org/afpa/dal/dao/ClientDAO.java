@@ -16,15 +16,18 @@ import java.util.ArrayList;
  */
 public final class ClientDAO implements CRUD<Client> {
     private final Connection connection;
+    private final String DELETE_CLIENT = "DELETE from client WHERE cli_id = ?";
+    private final String DELETE_RESERVATION = "DELETE FROM reservation WHERE res_cli_id = ?";
+    private final String INSERT_CLIENT = "INSERT INTO client(cli_nom, cli_prenom, cli_adresse, cli_ville) VALUES (?,?,?,?)";
+    private final String SELECT_CLIENT = "SELECT * FROM client WHERE cli_id = ?";
+    private final String SELECT_CLIENTS = "SELECT * FROM client";
+    private final String UPDATE_CLIENT = "UPDATE client SET cli_nom = ?, cli_prenom = ?, cli_adresse = ?, cli_ville = ? WHERE cli_id = ?";
 
     /**
      * Primary constructor
-     *
-     * @throws SQLException If the connection cannot be established
      */
-    public ClientDAO() throws SQLException {
-        // TODO Add SQL file .properties
-        connection =  DataSource.getConnection();
+    public ClientDAO() {
+        connection = DataSource.getConnection();
     }
 
     /**
@@ -37,7 +40,7 @@ public final class ClientDAO implements CRUD<Client> {
     public void delete(int id) throws SQLException {
         Savepoint firstSavepoint = null, secondSavepoint = null;
 
-        try (PreparedStatement reservation = connection.prepareStatement("DELETE FROM reservation WHERE res_cli_id = ?")) {
+        try (PreparedStatement reservation = connection.prepareStatement(DELETE_RESERVATION)) {
             // Creates a savepoint before deleting the reservation
             firstSavepoint = connection.setSavepoint("beforeReservationDelete");
 
@@ -47,7 +50,7 @@ public final class ClientDAO implements CRUD<Client> {
             // Commits the changes to the database
             connection.commit();
 
-            try (PreparedStatement client = connection.prepareStatement("DELETE from client WHERE id = ?")) {
+            try (PreparedStatement client = connection.prepareStatement(DELETE_CLIENT)) {
                 // Creates a savepoint before deleting the the client
                 secondSavepoint = connection.setSavepoint("beforeClientDelete");
 
@@ -81,7 +84,7 @@ public final class ClientDAO implements CRUD<Client> {
      */
     @Override
     public Client find(int id) throws SQLException {
-        try (PreparedStatement clientStatement = connection.prepareStatement("SELECT * FROM client WHERE cli_id = ?")) {
+        try (PreparedStatement clientStatement = connection.prepareStatement(SELECT_CLIENT)) {
             // Creates a new empty Client object
             Client client = new Client();
 
@@ -125,7 +128,7 @@ public final class ClientDAO implements CRUD<Client> {
      */
     @Override
     public void insert(Client client) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO client(cli_nom, cli_prenom, cli_adresse, cli_ville) VALUES (?,?,?,?)")) {
+        try (PreparedStatement ps = connection.prepareStatement(INSERT_CLIENT)) {
             ps.setString(1, client.getLastName());
             ps.setString(2, client.getFirstName());
             ps.setString(3, client.getAddress());
@@ -153,7 +156,7 @@ public final class ClientDAO implements CRUD<Client> {
      */
     @Override
     public ArrayList<Client> list() throws SQLException {
-        try (ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM client")) {
+        try (ResultSet rs = connection.createStatement().executeQuery(SELECT_CLIENTS)) {
             // Initializes a new Client ArrayList
             ArrayList<Client> clients = new ArrayList<>();
 
@@ -196,12 +199,13 @@ public final class ClientDAO implements CRUD<Client> {
      */
     @Override
     public void update(Client client) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement("UPDATE client SET cli_nom = ?, cli_prenom = ?, cli_adresse = ?, cli_ville = ? WHERE cli_id = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement(UPDATE_CLIENT)) {
             // Use a Prepared Statement to avoid SQL Injection
             ps.setString(1, client.getLastName());
             ps.setString(2, client.getFirstName());
             ps.setString(3, client.getAddress());
             ps.setString(4, client.getCity());
+            ps.setInt(5, client.getId());
 
             // Updates the record into the database
             ps.executeUpdate();
