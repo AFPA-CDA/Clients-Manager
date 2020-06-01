@@ -222,6 +222,12 @@ public final class ClientDAO implements CRUD<Client> {
         }
     }
 
+    /**
+     * Returns the last client from the database
+     *
+     * @return The last client
+     * @throws SQLException If any database error occurs
+     */
     public Client getLastClient() throws SQLException {
         try (ResultSet rs = connection.createStatement().executeQuery(SELECT_LAST_CLIENT)) {
             Client client = new Client();

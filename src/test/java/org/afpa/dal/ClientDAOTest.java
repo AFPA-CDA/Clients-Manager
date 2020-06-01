@@ -22,9 +22,7 @@ public class ClientDAOTest {
 
         clientDAO.insert(client);
 
-        ArrayList<Client> clients = clientDAO.list();
-
-        Client foundClient = clientDAO.find(clients.get(clients.size() - 1).getId());
+        Client foundClient = clientDAO.getLastClient();
 
         Assert.assertEquals("65 rue imaginaire", foundClient.getAddress());
         Assert.assertEquals("Imaginaire", foundClient.getCity());
@@ -33,13 +31,51 @@ public class ClientDAOTest {
     }
 
     @Test
+    public void update() throws SQLException {
+        Client updatedClient = clientDAO.getLastClient();
+
+        updatedClient.setAddress("La rue de l'update");
+        updatedClient.setCity("Updatia");
+        updatedClient.setFirstName("Jean");
+        updatedClient.setLastName("Update");
+
+        clientDAO.update(updatedClient);
+
+        Client newClient = clientDAO.getLastClient();
+
+        Assert.assertEquals("La rue de l'update", newClient.getAddress());
+        Assert.assertEquals("Updatia", newClient.getCity());
+        Assert.assertEquals("Jean", newClient.getFirstName());
+        Assert.assertEquals("Update", newClient.getLastName());
+    }
+
+    @Test
+    public void find() throws SQLException {
+        Client client = clientDAO.find(clientDAO.getLastClient().getId());
+
+        Assert.assertEquals("La rue de l'update", client.getAddress());
+        Assert.assertEquals("Updatia", client.getCity());
+        Assert.assertEquals("Jean", client.getFirstName());
+        Assert.assertEquals("Update", client.getLastName());
+    }
+
+    @Test
+    public void list() throws SQLException {
+        ArrayList<Client> clients = clientDAO.list();
+
+        Assert.assertNotNull(clients);
+    }
+
+    @Test
     public void delete() throws SQLException {
         ArrayList<Client> clients = clientDAO.list();
+
+        int sizeBeforeDelete = clients.size() - 1;
 
         Client foundClient = clientDAO.getLastClient();
 
         clientDAO.delete(foundClient.getId());
 
-        Assert.assertNull(clientDAO.find(foundClient.getId()));
+        Assert.assertEquals(sizeBeforeDelete, clientDAO.list().size());
     }
 }
