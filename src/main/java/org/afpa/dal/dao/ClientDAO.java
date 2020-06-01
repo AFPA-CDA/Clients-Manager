@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * The Data Access Object for the Client model.
  *
- * @see org.afpa.dal.interfaces.CRUD<Client>
+ * @see CRUD
  * @see Client
  */
 public final class ClientDAO implements CRUD<Client> {
@@ -21,6 +21,7 @@ public final class ClientDAO implements CRUD<Client> {
     private final String INSERT_CLIENT = "INSERT INTO client(cli_nom, cli_prenom, cli_adresse, cli_ville) VALUES (?,?,?,?)";
     private final String SELECT_CLIENT = "SELECT * FROM client WHERE cli_id = ?";
     private final String SELECT_CLIENTS = "SELECT * FROM client";
+    private final String SELECT_LAST_CLIENT = "SELECT * FROM client ORDER BY cli_id DESC LIMIT 1";
     private final String UPDATE_CLIENT = "UPDATE client SET cli_nom = ?, cli_prenom = ?, cli_adresse = ?, cli_ville = ? WHERE cli_id = ?";
 
     /**
@@ -218,6 +219,30 @@ public final class ClientDAO implements CRUD<Client> {
 
             // Rollbacks the changes to the database
             connection.rollback();
+        }
+    }
+
+    public Client getLastClient() throws SQLException {
+        try (ResultSet rs = connection.createStatement().executeQuery(SELECT_LAST_CLIENT)) {
+            Client client = new Client();
+
+            while (rs.next()) {
+                client.setAddress(rs.getString("cli_adresse"));
+                client.setCity(rs.getString("cli_ville"));
+                client.setFirstName(rs.getString("cli_prenom"));
+                client.setId(rs.getInt("cli_id"));
+                client.setLastName(rs.getString("cli_nom"));
+            }
+
+            return client;
+        } catch (SQLException e) {
+            // Pretty prints the exception
+            new ExceptionPrinter<>(e).print();
+
+            // Rollbacks the changes to the database
+            connection.rollback();
+
+            return null;
         }
     }
 }
